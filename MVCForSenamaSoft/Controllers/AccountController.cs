@@ -40,7 +40,7 @@ namespace MVCForSenamaSoft.Controllers
         {
             if (/*ModelState.IsValid*/Helpers.IsEmailValid(model.Email))
             {
-                User user = _db.Users.FirstOrDefault(u => u.Email == model.Email); //
+                User user = _db.Users.FirstOrDefault(u => u.Email == model.Email); 
                 if (user == null)
                 {
                     _db.Users.Add(new User
@@ -60,9 +60,9 @@ namespace MVCForSenamaSoft.Controllers
                         Password = Helpers.GenerateRandomPassword()
                     };
 
-                    SendEmail(userEmail.Domain, userEmail.UserName, userEmail.Password);
+                    SendEmail(userEmail.Domain, userEmail.UserName, userEmail.Password, model.Email);
 
-                    Authenticate(model.Email, model.IsRememberMe);
+                    Authenticate(model.Email);
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -75,27 +75,24 @@ namespace MVCForSenamaSoft.Controllers
             return View(model);
         }
 
-        public void SendEmail(string domain, string userName, string password)
+        public void SendEmail(string domain, string userName, string password, string email)
         {
-            _service.SendEmail(domain, userName, password);
+            _service.SendEmail(domain, userName, password, email);
         }
 
-        private /*async Task*/void Authenticate(string Email, bool isRememberMe)
+        private void Authenticate(string Email /*, bool isRememberMe*/)
         {
-            // add checkbox processing
-
-            // создаем один claim
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, Email)
             };
-            // создаем объект ClaimsIdentity
+
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-            // установка аутентификационных куки
-            if (isRememberMe) // add checkbox processing
-            {
+            
+            //if (isRememberMe) // add checkbox processing
+            //{
                 HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
-            }
+            //}
         }
 
         public IActionResult Logout()
@@ -107,7 +104,7 @@ namespace MVCForSenamaSoft.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated) // no need to delete later
+            if (User.Identity.IsAuthenticated) 
             {
                 return Content(String.Format("Hello {0}!!!", User.Identity.Name));
             }
@@ -127,7 +124,7 @@ namespace MVCForSenamaSoft.Controllers
                     u.Password == u.Password);
                 if (user != null)
                 {
-                    Authenticate(model.Domain, model.IsRemberMe);
+                    Authenticate(model.Domain);
                     return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");

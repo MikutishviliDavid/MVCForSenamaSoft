@@ -18,14 +18,14 @@ namespace MVCForSenamaSoft.Services
             this.logger = logger;
         }
 
-        public void SendEmail(string domain, string userName, string password) 
+        public void SendEmail(string domain, string userName, string password, string email) 
         {
             try
             {
                 MailMessage message = new MailMessage();
                 message.IsBodyHtml = true;
                 message.From = new MailAddress("admin@mycompany.com", "My company");
-                message.To.Add("davidmikut@mail.ru");
+                message.To.Add(email);
                 message.Subject = "Message from the System.Net.Mail";
                 message.Body = 
                     String.Format("<div>Domain: {0}<br>User name: {1}<br>Password: {2}</div>", domain, userName, password);
