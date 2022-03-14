@@ -22,14 +22,13 @@ namespace MVCForSenamaSoft
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<UsersContext>(options => options.UseSqlServer(connection));
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options => //CookieAuthenticationOptions
+                .AddCookie(options =>
                 {
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(120);
                     options.Cookie.MaxAge = options.ExpireTimeSpan;
@@ -40,7 +39,6 @@ namespace MVCForSenamaSoft
             services.AddControllersWithViews();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -50,7 +48,7 @@ namespace MVCForSenamaSoft
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
@@ -66,7 +64,6 @@ namespace MVCForSenamaSoft
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                    //pattern: "{controller=Account}/{action=Register}/{id?}");
         });
         }
     }

@@ -4,13 +4,13 @@ namespace MVCForSenamaSoft.ViewModels
 {
     public class LoginModel
     {
-        [Required(ErrorMessage = "The email address is not specified")]
+        [Required]
         public string Domain { get; set; }
 
-        [Required(ErrorMessage = "The user name is not specified")]
+        [Required]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "The password is not specified")]
+        [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

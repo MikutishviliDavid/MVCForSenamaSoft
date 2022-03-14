@@ -38,7 +38,7 @@ namespace MVCForSenamaSoft.Controllers
         [HttpPost]
         public IActionResult Register(RegisterModel model)
         {
-            if (/*ModelState.IsValid*/Helpers.IsEmailValid(model.Email))
+            if (Helpers.IsEmailValid(model.Email))
             {
                 User user = _db.Users.FirstOrDefault(u => u.Email == model.Email); 
                 if (user == null)
@@ -69,7 +69,6 @@ namespace MVCForSenamaSoft.Controllers
                 {
                     ModelState.AddModelError("CustomError", "This mail is already busy");
                 }
-                //return Content($"{model.Email}");
             }
 
             return View(model);
@@ -80,7 +79,7 @@ namespace MVCForSenamaSoft.Controllers
             _service.SendEmail(domain, userName, password, email);
         }
 
-        private void Authenticate(string Email /*, bool isRememberMe*/)
+        private void Authenticate(string Email)
         {
             var claims = new List<Claim>
             {
@@ -89,10 +88,7 @@ namespace MVCForSenamaSoft.Controllers
 
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
             
-            //if (isRememberMe) // add checkbox processing
-            //{
-                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
-            //}
+            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
 
         public IActionResult Logout()
@@ -108,7 +104,7 @@ namespace MVCForSenamaSoft.Controllers
             {
                 return Content(String.Format("Hello {0}!!!", User.Identity.Name));
             }
-            //return Content("Not authenticated");
+
             return View();
         }
 
@@ -116,7 +112,7 @@ namespace MVCForSenamaSoft.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Login(LoginModel model)
         {
-            if (ModelState.IsValid)// ???
+            if (ModelState.IsValid)
             {
                 User user = _db.Users.FirstOrDefault(
                     u => u.Domain == model.Domain &&
@@ -127,7 +123,7 @@ namespace MVCForSenamaSoft.Controllers
                     Authenticate(model.Domain);
                     return RedirectToAction("Index", "Home");
                 }
-                ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                ModelState.AddModelError("", "Incorrect data");
             }
 
             return View(model);
